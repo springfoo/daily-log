@@ -7,7 +7,7 @@
           <span class="logo-text">一日小记</span>
         </div>
         <div class="logo logo-collapsed" v-show="isCollapsed">
-          <img class="logo-icon" src="../assets/logo-collapsed.jpg" alt="Logo">
+          <img class="logo-icon" src="../assets/logo.jpg" alt="Logo">
         </div>
       </div>
       <el-menu
