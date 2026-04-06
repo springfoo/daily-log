@@ -25,4 +25,22 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // 重点：自定义 chunk 文件名，去掉默认的下划线
+        chunkFileNames: (chunkInfo) => {
+          // 移除开头的 _
+          const name = chunkInfo.name.replace(/^_/, '')
+          return `assets/${name}-[hash].js`
+        },
+
+        // 如果你想连 CSS 也一起去掉下划线（推荐）
+        assetFileNames: (assetInfo) => {
+          const name = assetInfo.name?.replace(/^_/, '')
+          return `assets/${name}-[hash].[ext]`
+        }
+      }
+    }
+  }
 })
