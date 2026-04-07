@@ -12,15 +12,18 @@ export class IndexedDBProvider implements DataProvider {
   }
 
   async saveDiary(entry: DiaryEntry): Promise<number> {
-    entry.updatedAt = new Date().toISOString()
-    const existing = await this.getDiary(entry.date)
+    // 深拷贝以移除 Vue 响应式代理，确保数据可以被 IndexedDB 存储
+    const plainEntry = JSON.parse(JSON.stringify(entry))
+    plainEntry.updatedAt = new Date().toISOString()
+    
+    const existing = await this.getDiary(plainEntry.date)
     if (existing) {
-      entry.id = existing.id
-      await db.diaries.put(entry)
+      plainEntry.id = existing.id
+      await db.diaries.put(plainEntry)
       return existing.id!
     } else {
-      entry.createdAt = new Date().toISOString()
-      return db.diaries.add(entry) as unknown as number
+      plainEntry.createdAt = new Date().toISOString()
+      return db.diaries.add(plainEntry) as unknown as number
     }
   }
 
@@ -46,12 +49,14 @@ export class IndexedDBProvider implements DataProvider {
 
   async importAll(entries: DiaryEntry[]): Promise<void> {
     for (const entry of entries) {
-      const existing = await this.getDiary(entry.date)
+      // 深拷贝以移除潜在的响应式代理
+      const plainEntry = JSON.parse(JSON.stringify(entry))
+      const existing = await this.getDiary(plainEntry.date)
       if (existing) {
-        entry.id = existing.id
-        await db.diaries.put(entry)
+        plainEntry.id = existing.id
+        await db.diaries.put(plainEntry)
       } else {
-        const { id: _id, ...rest } = entry
+        const { id: _id, ...rest } = plainEntry
         await db.diaries.add(rest as DiaryEntry)
       }
     }
