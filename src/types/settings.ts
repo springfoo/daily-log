@@ -9,6 +9,15 @@ export interface TimeGridSettings {
   slotMinutes: number
 }
 
+export interface MealDefaults {
+  /** 默认早餐 */
+  breakfast: string
+  /** 默认午餐 */
+  lunch: string
+  /** 默认晚餐 */
+  dinner: string
+}
+
 export interface AppSettings {
   /** 时间方格设置 */
   timeGrid: TimeGridSettings
@@ -16,6 +25,8 @@ export interface AppSettings {
   theme: 'light' | 'dark' | 'auto'
   /** 活动类型自定义配置 */
   activityColors: Record<string, string>
+  /** 餐食默认值 */
+  mealDefaults: MealDefaults
 }
 
 export const defaultSettings: AppSettings = {
@@ -35,5 +46,10 @@ export const defaultSettings: AppSettings = {
     commute: '#5cdbd3',
     rest: '#d9d9d9',
     other: '#c0c4cc',
+  },
+  mealDefaults: {
+    breakfast: '',
+    lunch: '',
+    dinner: '',
   },
 }

@@ -52,6 +52,43 @@
       </div>
     </el-card>
 
+    <!-- 餐食默认值 -->
+    <el-card shadow="hover" class="settings-card">
+      <template #header>
+        🍽️ 餐食默认值
+        <el-tag size="small" type="info" style="margin-left: 8px">快速填充</el-tag>
+      </template>
+      <el-form label-width="80px" size="default">
+        <el-form-item label="默认早餐">
+          <el-input
+            v-model="settingsStore.settings.mealDefaults.breakfast"
+            placeholder="例如：豆浆+油条"
+            clearable
+          />
+        </el-form-item>
+        <el-form-item label="默认午餐">
+          <el-input
+            v-model="settingsStore.settings.mealDefaults.lunch"
+            placeholder="例如：公司食堂"
+            clearable
+          />
+        </el-form-item>
+        <el-form-item label="默认晚餐">
+          <el-input
+            v-model="settingsStore.settings.mealDefaults.dinner"
+            placeholder="例如：在家做饭"
+            clearable
+          />
+        </el-form-item>
+        <el-alert
+          title="提示：在编辑日记时，可以快速应用这些默认值"
+          type="info"
+          :closable="false"
+          show-icon
+        />
+      </el-form>
+    </el-card>
+
     <!-- 数据管理 -->
     <el-card shadow="hover" class="settings-card">
       <template #header>数据管理</template>
