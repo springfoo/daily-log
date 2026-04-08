@@ -57,27 +57,45 @@
     <el-dialog
       v-model="showDescDialog"
       title="添加活动描述"
-      width="400px"
+      width="450px"
       @close="onDescDialogClose"
     >
-      <div class="desc-dialog-info">
-        <el-tag
-          :color="settingsStore.getActivityColor(selectedActivity)"
-          effect="dark"
-          size="small"
-        >
-          {{ settingsStore.getActivityConfig(selectedActivity).label }}
-        </el-tag>
-        <span class="desc-time-range">
-          {{ selectionTimeRange }}
-        </span>
+      <div class="desc-dialog-content">
+        <div class="desc-time-range">
+          <el-icon><Clock /></el-icon>
+          <span>{{ selectionTimeRange }}</span>
+        </div>
+        
+        <div class="desc-field">
+          <label class="field-label">活动类型</label>
+          <el-select v-model="tempActivityType" placeholder="选择活动类型" style="width: 100%">
+            <el-option
+              v-for="act in settingsStore.activityTypes"
+              :key="act.type"
+              :value="act.type"
+              :label="act.label"
+            >
+              <div class="activity-option">
+                <span
+                  class="activity-dot"
+                  :style="{ backgroundColor: settingsStore.getActivityColor(act.type) }"
+                ></span>
+                <span>{{ act.label }}</span>
+              </div>
+            </el-option>
+          </el-select>
+        </div>
+
+        <div class="desc-field">
+          <label class="field-label">活动描述（可选）</label>
+          <el-input
+            v-model="tempDescription"
+            type="textarea"
+            :rows="3"
+            placeholder="描述一下这段时间做了什么..."
+          />
+        </div>
       </div>
-      <el-input
-        v-model="tempDescription"
-        type="textarea"
-        :rows="3"
-        placeholder="描述一下这段时间做了什么..."
-      />
       <template #footer>
         <el-button @click="showDescDialog = false">跳过</el-button>
         <el-button type="primary" @click="confirmDescription">确认</el-button>
@@ -88,7 +106,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { Delete, InfoFilled } from '@element-plus/icons-vue'
+import { Delete, InfoFilled, Clock } from '@element-plus/icons-vue'
 import { useSettingsStore } from '@/stores/settings'
 import type { ActivityType, TimeSlot } from '@/types/diary'
 
@@ -108,6 +126,7 @@ const dragStart = ref(-1)
 const dragEnd = ref(-1)
 const showDescDialog = ref(false)
 const tempDescription = ref('')
+const tempActivityType = ref<ActivityType>('work')
 const pendingSlotIndices = ref<number[]>([])
 
 /** 根据设置生成所有时间方格 */
@@ -202,6 +221,7 @@ function onMouseUp() {
 
   pendingSlotIndices.value = indices
   tempDescription.value = ''
+  tempActivityType.value = selectedActivity.value
   showDescDialog.value = true
 }
 
@@ -222,7 +242,7 @@ function applySelection(description: string) {
     const slotData: TimeSlot = {
       index,
       startTime: settingsStore.getTimeByIndex(index),
-      activityType: selectedActivity.value,
+      activityType: tempActivityType.value,
       description: description || undefined,
     }
     if (existingIdx >= 0) {
@@ -338,15 +358,39 @@ watch(
   color: rgba(255, 255, 255, 0.9);
 }
 
-.desc-dialog-info {
+.desc-dialog-content {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .desc-time-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: #f5f7fa;
+  border-radius: 6px;
   font-size: 14px;
   color: #606266;
+  font-weight: 500;
+}
+
+.desc-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field-label {
+  font-size: 14px;
+  color: #606266;
+  font-weight: 500;
+}
+
+.activity-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 </style>
